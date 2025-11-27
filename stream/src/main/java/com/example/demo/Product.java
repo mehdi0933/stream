@@ -118,7 +118,7 @@ public class Product {
                                                      .toList();
 
         //fiveCheapestProducts.forEach(product -> System.out.println(product.getName() + " - " + product.getPrice()));
-        
+
         List<String> modeProductNames = products.stream()
                                                 .filter(product -> "Informatique".equals(product.getCategory()))
                                                 .map(product -> product.getName())
@@ -168,7 +168,7 @@ public class Product {
                 ));
 
         revenueByBrand.forEach((brand, revenue) ->
-                System.out.println(brand + " → " + revenue));
+                System.out.println(brand + " rappoort " + revenue));
 
     }
 
