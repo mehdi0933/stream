@@ -50,127 +50,143 @@ public class Product {
 
     public static void main(String[] args) {
 
+        // Génération de la liste de produits fictifs
         List<Product> products = generateFakeProductList();
 
-        /**
-         *  Point de départ pour l'exercice.
-         *  Vous utiliserez la liste `products` pour réaliser les différentes consignes.
-         */
-
-        // TODO : Écrire le code des consignes ci-dessous
-        products.stream().map(Product -> Product.toString());
-                         //.forEach(Product -> System.out.println("tout les produits "+Product));
-
-        List<Product> filteredProducts = products.stream()
-                                                 .filter(product -> product.getPrice() <= 50)
-                                                 .filter(product -> product.getCategory().equals("Informatique"))
-                                                 .collect(Collectors.toList());
-
-        //filteredProducts.forEach(Product -> System.out.println("les produits informatique de moins de 50€  "+Product));
-
-        // ma version
-        List<Product> brandsCatalogue =  products.stream().toList();
-        brandsCatalogue.stream()
-                       .map(brands->brands.getCategory()).distinct();
-                       //.forEach(brands -> System.out.println("les marques " + brands));
-
-        // correction IA
-        List<String> brandsCatalogues =
+        // 1 Affichez tous les produits du catalogue
+        System.out.println("1 Tous les produits :");
         products.stream()
-        .map(Product::getCategory)
-        .distinct()
-        .toList();
+                .forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
 
-        //brandsCatalogue.forEach(System.out::println);
+        // 2 Affichez la liste des noms de tous les produits
+        System.out.println("2 Noms de tous les produits :");
+        products.stream()
+                .map(Product::getName)
+                .forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
 
-        //Calculez et affichez le prix moyen de tous les produits du catalogue.
+        // 3 Liste des produits dont le prix est ≤ 50€
+        System.out.println("3 Produits à ≤ 50€ :");
+        List<Product> filteredProducts = products.stream()
+                .filter(p -> p.getPrice() <= 50)
+                .collect(Collectors.toList());
+        filteredProducts.forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
+
+        // 4 Nombre de produits de la catégorie "Informatique"
+        long countInformatique = products.stream()
+                .filter(p -> "Informatique".equals(p.getCategory()))
+                .count();
+        System.out.println("4 Nombre de produits Informatique : " + countInformatique);
+        System.out.println("--------------------------------------------------");
+
+        // 5 Liste des marques présentes dans le catalogue (sans doublons)
+        System.out.println("5 Marques présentes :");
+        List<String> brandsCatalogues = products.stream()
+                .map(Product::getBrand)
+                .distinct()
+                .toList();
+        brandsCatalogues.forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
+
+        // 6 Prix moyen de tous les produits
         double moyenne = products.stream()
-                                 .mapToDouble(p -> p.getPrice())
-                                 .average()
-                                 .orElse(0.0);
-        //System.out.println("le prix moyenne " + moyenne);
+                .mapToDouble(Product::getPrice)
+                .average()
+                .orElse(0.0);
+        System.out.println("6 Prix moyen : " + moyenne);
+        System.out.println("--------------------------------------------------");
 
-
-        //Trouvez et affichez le produit le plus cher du catalogue.
-
+        // 7 Produit le plus cher
         double priceMax = products.stream()
-                                  .mapToDouble(product -> product.getPrice())
-                                  .max()
-                                  .orElse(0.0);
-        //System.out.println("le prix le plus eleve " + priceMax);
+                .mapToDouble(Product::getPrice)
+                .max()
+                .orElse(0.0);
+        System.out.println("7 Prix le plus élevé : " + priceMax);
+        System.out.println("--------------------------------------------------");
 
-
-        //Vérifiez si tous les produits marqués comme available == true ont un stock strictement supérieur à 0.
-
-        boolean stock = products.stream()
-                .filter(product -> product.isAvailable())
-                .allMatch(product -> product.getStock() > 0);
-
-        if(stock){
-            //System.out.println("✅ Tous les produits disponibles ont du stock.");
+        // 8 Vérification du stock pour les produits disponibles
+        boolean stockOk = products.stream()
+                .filter(Product::isAvailable)
+                .allMatch(p -> p.getStock() > 0);
+        System.out.println("8 Vérification stock :");
+        if (stockOk) {
+            System.out.println("✅ Tous les produits disponibles ont du stock.");
         } else {
-            //System.out.println("🚨 Attention : certains produits disponibles n'ont pas de stock !");
+            System.out.println("🚨 Attention : certains produits disponibles n'ont pas de stock !");
         }
+        System.out.println("--------------------------------------------------");
 
+        // 9 5 produits les moins chers
+        System.out.println("9 5 produits les moins chers :");
         List<Product> fiveCheapestProducts = products.stream()
-                                                     .sorted(Comparator.comparingDouble(Product::getPrice))
-                                                     .limit(5)
-                                                     .toList();
+                .sorted(Comparator.comparingDouble(Product::getPrice))
+                .limit(5)
+                .toList();
+        fiveCheapestProducts.forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
 
-        //fiveCheapestProducts.forEach(product -> System.out.println(product.getName() + " - " + product.getPrice()));
-
+        // 10 Noms des produits de la catégorie "Mode" triés par ordre alphabétique
+        System.out.println("10 Produits catégorie Mode :");
         List<String> modeProductNames = products.stream()
-                                                .filter(product -> "Informatique".equals(product.getCategory()))
-                                                .map(product -> product.getName())
-                                                .sorted()
-                                                .toList();
-        //modeProductNames.forEach(System.out::println);
+                .filter(p -> "Mode".equals(p.getCategory()))
+                .map(Product::getName)
+                .sorted()
+                .toList();
+        modeProductNames.forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
 
+        // 11) Regroupement des produits par catégorie
+        System.out.println("11) Produits regroupés par catégorie :");
+        Map<String, List<Product>> productsByCategory = products.stream()
+                .collect(Collectors.groupingBy(Product::getCategory));
+        productsByCategory.forEach((category, list) -> {
+            System.out.println("Catégorie : " + category);
+            list.forEach(System.out::println);
+        });
+        System.out.println("--------------------------------------------------");
 
-        //Créez une Collection de type Map<String, List<Product>> qui regroupe les produits par catégorie (clé = nom de la catégorie, valeur = liste des produits de cette catégorie).
-
+        // 12) Nombre de produits par marque
+        System.out.println("12) Nombre de produits par marque :");
         Map<String, Long> productCountByBrand = products.stream()
-                                                        .collect(Collectors.groupingBy(Product::getBrand, Collectors.counting()));
+                .collect(Collectors.groupingBy(Product::getBrand, Collectors.counting()));
+        productCountByBrand.forEach((brand, count) -> System.out.println(brand + " = " + count));
+        System.out.println("--------------------------------------------------");
 
-        //productCountByBrand.forEach((brand, count) -> System.out.println(brand + " → " + count));
-
-
-
+        // 13) Séparation des produits en promotion et non en promotion
+        System.out.println("13) Produits en promotion et non en promotion :");
         Map<Boolean, List<Product>> partitionedBySale = products.stream()
-                                                                .collect(Collectors.partitioningBy(Product::isOnSale));
+                .collect(Collectors.partitioningBy(Product::isOnSale));
+        System.out.println("Produits en promotion :");
+        partitionedBySale.get(true).forEach(System.out::println);
+        System.out.println("\nProduits non en promotion :");
+        partitionedBySale.get(false).forEach(System.out::println);
+        System.out.println("--------------------------------------------------");
 
-       // System.out.println("Produits en promotion :");
-        //partitionedBySale.get(true).forEach(System.out::println);
-
-        //System.out.println("\nProduits non en promotion :");
-        //partitionedBySale.get(false).forEach(System.out::println);
-
-
-        //Trouvez un produit de la catégorie "Jeux vidéo" (n’importe lequel) dont la note (rating) est supérieure ou égale à 4.7.
-
+        // 14) Trouver un produit "Jeux vidéo" avec rating ≥ 4.7
+        System.out.println("14) Produit Jeux vidéo avec rating ≥ 4.7 :");
         Optional<Product> highRatedGame = products.stream()
-                                                  .filter(product -> "Jeux vidéo".equals(product.getCategory()))
-                                                  .filter(product -> product.getRating() >= 4.7)
-                                                  .findAny();
+                .filter(product -> "Jeux vidéo".equals(product.getCategory()))
+                .filter(product -> product.getRating() >= 4.7)
+                .findAny();
+        highRatedGame.ifPresentOrElse(
+                product -> System.out.println("✅ Produit trouvé : " + product.getName()),
+                () -> System.out.println("❌ Aucun produit trouvé")
+        );
+        System.out.println("--------------------------------------------------");
 
-        if (highRatedGame.isPresent()) {
-            //System.out.println("✅ Produit trouvé : " + highRatedGame.get().getName());
-        } else {
-            //System.out.println("❌ Aucun produit trouvé");
-        }
-
-        //BONUS [⭐️⭐️⭐️⭐️⭐️] : On veut estimer, par marque, le chiffre d'affaires théorique si tout le stock était vendu.
-
+        // 15) BONUS : Chiffre d'affaires théorique par marque
+        System.out.println("15) Chiffre d'affaires théorique par marque :");
         Map<String, Double> revenueByBrand = products.stream()
-                                                     .collect(Collectors.groupingBy(
-                                                        Product::getBrand,
-                                                        Collectors.summingDouble(product -> product.getPrice() * product.getStock())
+                .collect(Collectors.groupingBy(
+                        Product::getBrand,
+                        Collectors.summingDouble(product -> product.getPrice() * product.getStock())
                 ));
-
-        revenueByBrand.forEach((brand, revenue) ->
-                System.out.println(brand + " rappoort " + revenue));
+        revenueByBrand.forEach((brand, revenue) -> System.out.println(brand + " = " + revenue));
 
     }
+
 
     public static List<Product> generateFakeProductList() {
         return List.of(
